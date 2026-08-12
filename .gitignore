@@ -1,0 +1,118 @@
+# ArenaPass - Git ignore rules
+
+# -----------------------------
+# Secrets / local environment
+# -----------------------------
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.local
+secrets/
+*.pem
+*.key
+
+# -----------------------------
+# Python cache / bytecode
+# -----------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/
+.tox/
+.nox/
+
+# -----------------------------
+# Virtual environments
+# -----------------------------
+.venv/
+venv/
+env/
+ENV/
+
+# -----------------------------
+# Coverage / test artifacts
+# -----------------------------
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# -----------------------------
+# Python packaging artifacts
+# -----------------------------
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# -----------------------------
+# Logs / runtime files
+# -----------------------------
+*.log
+logs/
+*.pid
+*.pid.lock
+
+# -----------------------------
+# Local databases / dumps
+# Keep project SQL source files (*.sql) tracked.
+# -----------------------------
+*.sqlite3
+*.db
+*.dump
+*.backup
+
+# -----------------------------
+# Node/frontend local artifacts
+# -----------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store/
+
+# -----------------------------
+# IDE / editor files
+# -----------------------------
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+
+# -----------------------------
+# OS-generated files
+# -----------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# -----------------------------
+# Temporary / archive files
+# -----------------------------
+*.tmp
+*.temp
+*.zip
+*.tar
+*.tar.gz
+
+# -----------------------------
+# Local Docker data directories
+# -----------------------------
+docker-data/
+postgres-data/
+redis-data/
+elasticsearch-data/
+
+# -----------------------------
+# Assignment PDFs
+# They are reference/assignment files, not project source.
+# Remove this line only if the instructor explicitly requires them in Git.
+# -----------------------------
+docs/*.pdf
