@@ -1,4 +1,4 @@
-# ArenaPass — Final Chen ERD (Single, High-Contrast, Zoomable)
+# MahTicket — Final Chen ERD (Single, High-Contrast, Zoomable)
 
 ```mermaid
 %%{init: {"theme":"base", "flowchart": {"useMaxWidth": false, "htmlLabels": true, "nodeSpacing": 28, "rankSpacing": 42}, "themeVariables": {"fontSize":"20px", "fontFamily":"Arial, sans-serif", "background":"#282c34", "primaryColor":"#ffffff", "primaryTextColor":"#111111", "primaryBorderColor":"#555555", "secondaryColor":"#ffffff", "secondaryTextColor":"#111111", "secondaryBorderColor":"#555555", "tertiaryColor":"#ffffff", "tertiaryTextColor":"#111111", "tertiaryBorderColor":"#555555", "lineColor":"#d8d8d8", "textColor":"#ffffff", "edgeLabelBackground":"#4a4d52", "clusterBkg":"#4a4d4b", "clusterBorder":"#777777", "titleColor":"#ffffff"}}}%%

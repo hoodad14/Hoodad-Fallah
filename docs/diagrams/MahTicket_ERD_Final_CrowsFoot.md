@@ -1,4 +1,4 @@
-# ArenaPass — Final Physical ERD (Crow's Foot)
+# MahTicket — Final Physical ERD (Crow's Foot)
 
 ## Physical ERD
 
