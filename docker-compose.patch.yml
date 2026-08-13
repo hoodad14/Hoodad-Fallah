@@ -1,0 +1,70 @@
+services:
+  backend:
+    volumes:
+      - type: bind
+        source: ./services_auth.py
+        target: /app/services_auth.py
+        read_only: true
+      - type: bind
+        source: ./authentication.py
+        target: /app/authentication.py
+        read_only: true
+      - type: bind
+        source: ./notifications.py
+        target: /app/notifications.py
+        read_only: true
+      - type: bind
+        source: ./config.py
+        target: /app/config.py
+        read_only: true
+      - type: bind
+        source: ./settings.py
+        target: /app/settings.py
+        read_only: true
+      - type: bind
+        source: ./entrypoint.sh
+        target: /app/entrypoint.sh
+        read_only: true
+      - type: bind
+        source: ./configure_gmail.py
+        target: /app/configure_gmail.py
+        read_only: true
+      - type: bind
+        source: ./smtp_smoke.py
+        target: /app/smtp_smoke.py
+        read_only: true
+      - type: bind
+        source: ./services_chat.py
+        target: /app/services_chat.py
+        read_only: true
+      - type: bind
+        source: ./services_support.py
+        target: /app/services_support.py
+        read_only: true
+      - type: bind
+        source: ./views.py
+        target: /app/views.py
+        read_only: true
+      - type: bind
+        source: ./urls.py
+        target: /app/urls.py
+        read_only: true
+
+  frontend:
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/conf.d/default.conf
+        read_only: true
+      - type: bind
+        source: ./index.html
+        target: /usr/share/nginx/html/index.html
+        read_only: true
+      - type: bind
+        source: ./styles.css
+        target: /usr/share/nginx/html/styles.css
+        read_only: true
+      - type: bind
+        source: ./app.js
+        target: /usr/share/nginx/html/app.js
+        read_only: true

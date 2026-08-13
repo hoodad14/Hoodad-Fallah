@@ -1,0 +1,285 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-arenapass}
+      POSTGRES_USER: ${POSTGRES_USER:-arenapass}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-arenapass-local-password}
+      POSTGRES_INITDB_ARGS: --data-checksums
+      TZ: ${TIME_ZONE:-Asia/Tehran}
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5432}:5432"
+    volumes:
+      - arenapass_postgres_data:/var/lib/postgresql/data
+      - "./database/00_schema.sql:/docker-entrypoint-initdb.d/00_schema.sql:ro"
+      - "./database/01_seed_data.sql:/docker-entrypoint-initdb.d/01_seed_data.sql:ro"
+      - "./database/02_required_queries.sql:/docker-entrypoint-initdb.d/02_required_queries.sql:ro"
+      - "./database/03_required_functions.sql:/docker-entrypoint-initdb.d/03_required_functions.sql:ro"
+      - "./database/04_business_functions.sql:/docker-entrypoint-initdb.d/04_business_functions.sql:ro"
+      - "./database/06_backend_extensions.sql:/docker-entrypoint-initdb.d/05_backend_extensions.sql:ro"
+      - "./database/05_validation_tests.sql:/docker-entrypoint-initdb.d/06_validation_tests.sql:ro"
+      - "./database/99_bootstrap_complete.sql:/docker-entrypoint-initdb.d/99_bootstrap_complete.sql:ro"
+    healthcheck:
+      test: ["CMD-SHELL", "psql -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\" -tAc \"SELECT 1 FROM system_bootstrap_state WHERE id=1 AND completed\" | grep -qx 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 10s
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+  redis:
+    image: redis:8-alpine
+    command: ["redis-server", "--appendonly", "yes", "--appendfsync", "everysec"]
+    ports:
+      - "127.0.0.1:${REDIS_HOST_PORT:-6379}:6379"
+    volumes:
+      - arenapass_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+    stop_grace_period: 20s
+
+
+  mailpit:
+    image: axllent/mailpit:v1.30.6
+    environment:
+      MP_UI_BIND_ADDR: 0.0.0.0:8025
+      MP_SMTP_BIND_ADDR: 0.0.0.0:1025
+      MP_WEBROOT: /mailpit/
+      MP_MAX_MESSAGES: "${MAILPIT_MAX_MESSAGES:-500}"
+      MP_MAX_MESSAGE_SIZE: "5"
+      MP_DATABASE: /data/mailpit.db
+      MP_DISABLE_VERSION_CHECK: "true"
+      MP_SEND_API_AUTH_ACCEPT_ANY: "true"
+    expose:
+      - "8025"
+      - "1025"
+    volumes:
+      - arenapass_mailpit_data:/data
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 5s
+    restart: unless-stopped
+    stop_grace_period: 15s
+
+  elasticsearch:
+    profiles: ["search"]
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.4.4
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      xpack.security.http.ssl.enabled: "false"
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    ports:
+      - "127.0.0.1:${ELASTICSEARCH_HOST_PORT:-9200}:9200"
+    volumes:
+      - arenapass_elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    mem_limit: 1g
+    restart: unless-stopped
+    stop_grace_period: 60s
+
+  backend:
+    image: arenapass-backend:3.1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    init: true
+    environment:
+      DEBUG: ${DEBUG:-true}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-local-django-secret-change-this-to-a-long-random-value-001}
+      JWT_SECRET: ${JWT_SECRET:-local-jwt-secret-change-this-to-a-different-random-value-002}
+      OTP_HMAC_SECRET: ${OTP_HMAC_SECRET:-local-otp-hmac-secret-change-this-to-another-random-value-003}
+      OTP_DEBUG_RETURN_CODE: ${OTP_DEBUG_RETURN_CODE:-false}
+      OTP_EMAIL_ENABLED: ${OTP_EMAIL_ENABLED:-true}
+      OTP_EMAIL_REQUIRED: ${OTP_EMAIL_REQUIRED:-true}
+      OTP_TTL_SECONDS: ${OTP_TTL_SECONDS:-300}
+      OTP_MAX_ATTEMPTS: ${OTP_MAX_ATTEMPTS:-5}
+      OTP_REQUEST_LIMIT: ${OTP_REQUEST_LIMIT:-5}
+      OTP_REQUEST_WINDOW_SECONDS: ${OTP_REQUEST_WINDOW_SECONDS:-600}
+      OTP_RESEND_COOLDOWN_SECONDS: ${OTP_RESEND_COOLDOWN_SECONDS:-45}
+      SIGNUP_TTL_SECONDS: ${SIGNUP_TTL_SECONDS:-600}
+      AUTH_PASSWORD_MAX_ATTEMPTS: ${AUTH_PASSWORD_MAX_ATTEMPTS:-5}
+      AUTH_PASSWORD_WINDOW_SECONDS: ${AUTH_PASSWORD_WINDOW_SECONDS:-900}
+      AUTH_PASSWORD_LOCK_SECONDS: ${AUTH_PASSWORD_LOCK_SECONDS:-900}
+      EMAIL_DELIVERY_MODE: ${EMAIL_DELIVERY_MODE:-smtp}
+      MAILPIT_API_URL: ${MAILPIT_API_URL:-http://mailpit:8025/mailpit}
+      MAILPIT_VERIFY_DELIVERY: ${MAILPIT_VERIFY_DELIVERY:-true}
+      EMAIL_BACKEND: ${EMAIL_BACKEND:-django.core.mail.backends.smtp.EmailBackend}
+      EMAIL_HOST: ${EMAIL_HOST:-smtp.gmail.com}
+      EMAIL_PORT: ${EMAIL_PORT:-587}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER:-}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD:-}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS:-true}
+      EMAIL_USE_SSL: ${EMAIL_USE_SSL:-false}
+      EMAIL_TIMEOUT: ${EMAIL_TIMEOUT:-10}
+      EMAIL_DELIVERY_RETRIES: ${EMAIL_DELIVERY_RETRIES:-4}
+      EMAIL_DELIVERY_RETRY_DELAY_MS: ${EMAIL_DELIVERY_RETRY_DELAY_MS:-400}
+      EMAIL_HEALTHCHECK_CACHE_SECONDS: ${EMAIL_HEALTHCHECK_CACHE_SECONDS:-300}
+      PUBLIC_MAILPIT_URL: ${PUBLIC_MAILPIT_URL:-}
+      DEFAULT_FROM_EMAIL: "${DEFAULT_FROM_EMAIL:-MahTicket <noreply@arenapass.local>}"
+      HOME: /tmp
+      XDG_RUNTIME_DIR: /tmp
+      ALLOW_LOCAL_WALLET_TOP_UP: ${ALLOW_LOCAL_WALLET_TOP_UP:-true}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-arenapass}:${POSTGRES_PASSWORD:-arenapass-local-password}@db:5432/${POSTGRES_DB:-arenapass}
+      REDIS_URL: redis://redis:6379/0
+      REDIS_REQUIRED: ${REDIS_REQUIRED:-true}
+      ELASTICSEARCH_ENABLED: ${ELASTICSEARCH_ENABLED:-false}
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_INDEX: ${ELASTICSEARCH_INDEX:-arenapass_tickets}
+      ELASTICSEARCH_FALLBACK_TO_SQL: ${ELASTICSEARCH_FALLBACK_TO_SQL:-true}
+      ELASTICSEARCH_SYNC_ON_STARTUP: ${ELASTICSEARCH_SYNC_ON_STARTUP:-true}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend,frontend}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000,http://localhost:5500,http://127.0.0.1:5500,http://localhost:8080,http://127.0.0.1:8080,http://localhost:8081,http://127.0.0.1:8081}
+      CORS_ALLOW_ALL: ${CORS_ALLOW_ALL:-false}
+      TIME_ZONE: ${TIME_ZONE:-Asia/Tehran}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DB_POOL_MIN: ${DB_POOL_MIN:-1}
+      DB_POOL_MAX: ${DB_POOL_MAX:-10}
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-3}
+      GUNICORN_THREADS: ${GUNICORN_THREADS:-2}
+      GUNICORN_TIMEOUT: ${GUNICORN_TIMEOUT:-60}
+    ports:
+      - "127.0.0.1:${BACKEND_HOST_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mailpit:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/ready', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 15s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+  worker:
+    image: arenapass-backend:3.1.0
+    init: true
+    entrypoint: ["/app/entrypoint.sh"]
+    command: ["python", "worker.py"]
+    environment:
+      DEBUG: ${DEBUG:-true}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-local-django-secret-change-this-to-a-long-random-value-001}
+      JWT_SECRET: ${JWT_SECRET:-local-jwt-secret-change-this-to-a-different-random-value-002}
+      OTP_HMAC_SECRET: ${OTP_HMAC_SECRET:-local-otp-hmac-secret-change-this-to-another-random-value-003}
+      OTP_DEBUG_RETURN_CODE: ${OTP_DEBUG_RETURN_CODE:-false}
+      OTP_EMAIL_ENABLED: ${OTP_EMAIL_ENABLED:-true}
+      OTP_EMAIL_REQUIRED: ${OTP_EMAIL_REQUIRED:-true}
+      EMAIL_DELIVERY_MODE: ${EMAIL_DELIVERY_MODE:-smtp}
+      MAILPIT_API_URL: ${MAILPIT_API_URL:-http://mailpit:8025/mailpit}
+      MAILPIT_VERIFY_DELIVERY: ${MAILPIT_VERIFY_DELIVERY:-true}
+      EMAIL_BACKEND: ${EMAIL_BACKEND:-django.core.mail.backends.smtp.EmailBackend}
+      EMAIL_HOST: ${EMAIL_HOST:-smtp.gmail.com}
+      EMAIL_PORT: ${EMAIL_PORT:-587}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER:-}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD:-}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS:-true}
+      EMAIL_USE_SSL: ${EMAIL_USE_SSL:-false}
+      EMAIL_TIMEOUT: ${EMAIL_TIMEOUT:-10}
+      EMAIL_DELIVERY_RETRIES: ${EMAIL_DELIVERY_RETRIES:-4}
+      EMAIL_DELIVERY_RETRY_DELAY_MS: ${EMAIL_DELIVERY_RETRY_DELAY_MS:-400}
+      EMAIL_HEALTHCHECK_CACHE_SECONDS: ${EMAIL_HEALTHCHECK_CACHE_SECONDS:-300}
+      PUBLIC_MAILPIT_URL: ${PUBLIC_MAILPIT_URL:-}
+      DEFAULT_FROM_EMAIL: "${DEFAULT_FROM_EMAIL:-ArenaPass <noreply@arenapass.local>}"
+      HOME: /tmp
+      XDG_RUNTIME_DIR: /tmp
+      ALLOW_LOCAL_WALLET_TOP_UP: ${ALLOW_LOCAL_WALLET_TOP_UP:-true}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-arenapass}:${POSTGRES_PASSWORD:-arenapass-local-password}@db:5432/${POSTGRES_DB:-arenapass}
+      REDIS_URL: redis://redis:6379/0
+      REDIS_REQUIRED: ${REDIS_REQUIRED:-true}
+      ELASTICSEARCH_ENABLED: ${ELASTICSEARCH_ENABLED:-false}
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_INDEX: ${ELASTICSEARCH_INDEX:-arenapass_tickets}
+      ELASTICSEARCH_FALLBACK_TO_SQL: ${ELASTICSEARCH_FALLBACK_TO_SQL:-true}
+      TIME_ZONE: ${TIME_ZONE:-Asia/Tehran}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      WORKER_INTERVAL_SECONDS: ${WORKER_INTERVAL_SECONDS:-30}
+      PAYMENT_REMINDER_ENABLED: ${PAYMENT_REMINDER_ENABLED:-false}
+      PAYMENT_REMINDER_BEFORE_SECONDS: ${PAYMENT_REMINDER_BEFORE_SECONDS:-180}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mailpit:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+  auth-smoke:
+    profiles: ["test"]
+    image: arenapass-backend:3.1.0
+    entrypoint: ["python", "auth_mailpit_smoke.py"]
+    environment:
+      API_BASE_URL: http://backend:8000/api/v1
+      MAILPIT_BASE_URL: http://mailpit:8025/mailpit
+    depends_on:
+      backend:
+        condition: service_healthy
+      mailpit:
+        condition: service_healthy
+    restart: "no"
+
+  frontend:
+    image: arenapass-frontend:1.7.0
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "127.0.0.1:${FRONTEND_HOST_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+      mailpit:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx:size=16m
+      - /var/run:size=1m
+      - /tmp:size=16m
+    restart: unless-stopped
+    stop_grace_period: 15s
+
+volumes:
+  arenapass_postgres_data:
+  arenapass_redis_data:
+  arenapass_mailpit_data:
+  arenapass_elasticsearch_data:
