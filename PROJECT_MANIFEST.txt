@@ -1,0 +1,124 @@
+ArenaPass Complete Final - Project Manifest
+==========================================
+Release date: 2026-08-04
+Release components: Backend v3.1.0 + Frontend v1.7.0
+Authentication client revision: 1.2.2
+Layout: exactly one top-level folder; every deliverable file is directly inside it.
+Official assignment file: پروژه پایانی درس(15).pdf
+Retained source-package assignment file: پروژه پایانی درس(14).pdf
+Runtime secret policy: .env is intentionally excluded; create it from .env.example when customization is needed.
+Frontend runtime policy: vanilla HTML/CSS/JavaScript served by Dockerized Nginx with same-origin API; Mailpit reverse proxy remains an optional fallback.
+Authentication policy: verified two-step signup, password login, email OTP, rotating JWT refresh tokens and server-side RBAC.
+Support chat policy: authenticated spectator/support conversations, direct-SQL persistence, unread tracking, agent replies and open/closed status.
+Support chat UI policy: circular viewport-stable launcher with a stronger transform-only spring drag; closing the panel preserves launcher position, focus and page scroll.
+Support reply UI policy: sent agent replies render immediately in the open thread and are reconciled with the server without rebuilding the dashboard.
+Language policy: a persistent FA/EN switch beside the theme control translates static and dynamic UI, updates metadata, changes RTL/LTR direction, and is included in the Dockerized frontend image.
+Mobile UI policy: compact header controls keep brand, language, theme, sign-in and menu visible without overlap.
+County and wallet input policy: county controls are keyboard-searchable; wallet top-up accepts manually entered Persian/English digits and separators.
+Email policy: Gmail SMTP is the default real OTP provider; credentials are created locally with configure_gmail.py, and Mailpit remains an optional /mailpit/ fallback.
+
+Total files in final folder: 104
+Deliverable files (excluding this manifest and checksum inventory): 102
+
+.dockerignore	118 bytes
+.env.example	4245 bytes
+.gitignore	107 bytes
+00_schema.sql	74443 bytes
+01_seed_data.sql	66675 bytes
+02_required_queries.sql	13766 bytes
+03_required_functions.sql	14267 bytes
+04_business_functions.sql	48069 bytes
+05_validation_tests.sql	31561 bytes
+06_backend_extensions.sql	20621 bytes
+99_bootstrap_complete.sql	648 bytes
+API_COVERAGE_MATRIX.md	3508 bytes
+AUTHENTICATION_GUIDE.md	9425 bytes
+AUTHENTICATION_VERIFICATION_REPORT.md	2593 bytes
+AUTH_AND_MATCH_DIVERSITY_UPDATE.md	510 bytes
+ArenaPass.postman_collection.json	70597 bytes
+BACKEND_REVIEW_REPORT.md	11538 bytes
+CHANGELOG.md	18536 bytes
+Dockerfile	903 bytes
+Dockerfile.frontend	376 bytes
+ELASTICSEARCH.md	5540 bytes
+ER_DIAGRAM.md	1890 bytes
+FINAL_DELIVERY_CHECKLIST.md	3250 bytes
+FRONTEND_COUNTIES_FONT_UPDATE.md	880 bytes
+FRONTEND_README.md	10899 bytes
+FRONTEND_VERIFICATION_REPORT.md	7128 bytes
+GIT_DELIVERY_GUIDE.md	2130 bytes
+GMAIL_SMTP_SETUP.md	4282 bytes
+LANGUAGE_TOGGLE_FIX.md	891 bytes
+MAILPIT_WHITE_PAGE_FIX.md	1053 bytes
+PATCH_VERIFICATION.json	1253 bytes
+README.md	25802 bytes
+SECURITY.md	6414 bytes
+TANHA_FONT_LICENSE.txt	2584 bytes
+TEAM_NAMES_READABILITY_FIX.md	583 bytes
+TESTING.md	6985 bytes
+Tanha-FD.woff2	34996 bytes
+VERIFICATION_REPORT.txt	4434 bytes
+app.js	200215 bytes
+asgi.py	158 bytes
+audit.py	1079 bytes
+auth_mailpit_smoke.py	5421 bytes
+authentication.py	19595 bytes
+cache.py	11517 bytes
+config.py	11017 bytes
+configure_gmail.py	4405 bytes
+conftest.py	152 bytes
+database.py	3902 bytes
+delivery_audit.py	15055 bytes
+docker-compose.patch.yml	1868 bytes
+docker-compose.yml	11295 bytes
+entrypoint.sh	4248 bytes
+env_loader.py	1183 bytes
+exceptions.py	2275 bytes
+frontend-preview-desktop.png	292577 bytes
+frontend-preview-mobile.png	266937 bytes
+gunicorn.conf.py	509 bytes
+i18n.js	52640 bytes
+index.html	39449 bytes
+integration_test.py	12640 bytes
+iran_counties.json	57500 bytes
+manage.py	343 bytes
+middleware.py	2966 bytes
+nginx.conf	3251 bytes
+notifications.py	19077 bytes
+openapi.json	155790 bytes
+preflight.py	4342 bytes
+pytest.ini	125 bytes
+requirements-dev.txt	52 bytes
+requirements.txt	118 bytes
+responses.py	1710 bytes
+run_local.bat	314 bytes
+run_local.sh	364 bytes
+run_worker_local.bat	289 bytes
+run_worker_local.sh	339 bytes
+search_engine.py	27114 bytes
+services_auth.py	22036 bytes
+services_catalog.py	13287 bytes
+services_chat.py	13364 bytes
+services_reservations.py	15850 bytes
+services_support.py	27991 bytes
+settings.py	4061 bytes
+setup_env.py	2354 bytes
+smoke_test.py	1954 bytes
+smtp_smoke.py	1408 bytes
+styles.css	59937 bytes
+sync_search_index.py	1746 bytes
+test_auth_flow.py	5206 bytes
+test_config.py	4855 bytes
+test_contract.py	20836 bytes
+test_responses.py	517 bytes
+test_search_engine.py	3732 bytes
+test_validators.py	2580 bytes
+urls.py	4366 bytes
+validators.py	8699 bytes
+version.py	104 bytes
+views.py	41199 bytes
+worker.py	6559 bytes
+wsgi.py	158 bytes
+راهنمای نصب پچ.txt	2715 bytes
+پروژه پایانی درس(14).pdf	4806341 bytes
+پروژه پایانی درس(15).pdf	4806341 bytes

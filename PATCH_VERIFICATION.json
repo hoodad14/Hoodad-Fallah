@@ -1,0 +1,31 @@
+{
+  "python_ast": "PASS (40 files)",
+  "javascript_syntax": "PASS",
+  "otp_unknown_account": "404 account_not_found",
+  "otp_unknown_rate_limit": "preserved",
+  "otp_inactive_account": "403 account_inactive",
+  "total_seed_matches": 68,
+  "new_seed_matches": 48,
+  "distinct_upcoming_teams": 48,
+  "same_day_team_conflicts": 0,
+  "legacy_match_ids_preserved": "1..20",
+  "legacy_ticket_ids_preserved": "1..40",
+  "frontend_release": "1.6.0",
+  "frontend_javascript_syntax": "PASS (app.js, i18n.js)",
+  "language_toggle": "PASS (header control beside theme; FA ↔ EN; current-language label)",
+  "language_direction": "PASS (document lang/dir, title, meta and layout RTL ↔ LTR)",
+  "english_visible_persian_ui_count": 0,
+  "chat_launcher_motion": "strong scroll drag (transform-only)",
+  "chat_close_jump": "fixed (scroll preserved)",
+  "mobile_header_390px": "PASS",
+  "english_routes_verified": [
+    "home",
+    "tickets",
+    "help",
+    "auth_dialog"
+  ],
+  "chat_scroll_motion": "PASS (strong transform-only spring)",
+  "chat_close_scroll_preserved": "PASS (500 → 500 in browser check)",
+  "dynamic_translation": "PASS (MutationObserver translates newly rendered UI; user chat body ignored)",
+  "language_persistence": "PASS (localStorage)"
+}
