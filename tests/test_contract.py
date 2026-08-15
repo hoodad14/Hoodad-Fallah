@@ -137,7 +137,6 @@ def test_required_delivery_assets_exist() -> None:
     required_docs = {
         "ELASTICSEARCH.md",
         "README.md",
-        "پروژه پایانی درس(14).pdf",
         "SECURITY.md",
         "TESTING.md",
         "AUTHENTICATION_GUIDE.md",
@@ -419,7 +418,7 @@ def test_elasticsearch_search_sync_contract_is_complete() -> None:
     assert "search_engine.process_outbox" in worker
     assert "full_sync(only_if_missing=True)" in worker
     assert "elasticsearch_fallback_to_sql" in catalog
-    assert "python sync_search_index.py --full" in entrypoint
+    assert "python scripts/sync_search_index.py --full" in entrypoint
     assert "v_trigger_count<>11" in validation
 
 

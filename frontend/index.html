@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071527">
+  <meta name="description" content="MahTicket - سامانه حرفه‌ای جستجو، رزرو و خرید بلیط مسابقات ورزشی">
+  <title>MahTicket | رزرو بلیط مسابقات ورزشی</title>
+  <link rel="stylesheet" href="styles.css?v=1.6.0">
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">رفتن به محتوای اصلی</a>
+
+  <div id="offlineBanner" class="offline-banner" role="status" aria-live="polite" hidden>
+    <span class="status-dot" aria-hidden="true"></span>
+    <strong id="offlineBannerTitle">سرور در دسترس نیست.</strong>
+    <span id="offlineBannerText">اطلاعات نمونه برای پیش‌نمایش رابط کاربری نمایش داده می‌شود و عملیات ثبت نمی‌شوند.</span>
+    <button class="link-button" type="button" data-action="retry-api">تلاش مجدد</button>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container header-inner">
+      <a class="brand" href="#/home" aria-label="MahTicket - صفحه اصلی">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><path d="M8 11.5A5.5 5.5 0 0 1 13.5 6h21A5.5 5.5 0 0 1 40 11.5V17a5 5 0 0 0 0 10v9.5a5.5 5.5 0 0 1-5.5 5.5h-21A5.5 5.5 0 0 1 8 36.5V27a5 5 0 0 0 0-10v-5.5Z"/><path class="brand-cut" d="M24 11v26M18 17h12M18 24h12M18 31h12"/></svg>
+        </span>
+        <span class="brand-copy">
+          <b>MahTicket</b>
+          <small>نبض ورزش، بلیط در دست تو</small>
+        </span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="منوی اصلی">
+        <a href="#/home" data-nav="home">خانه</a>
+        <a href="#/tickets" data-nav="tickets">مسابقات</a>
+        <a href="#/my" data-nav="my" class="auth-only" hidden>حساب من</a>
+        <a href="#/support" data-nav="support" class="support-only" hidden>پنل پشتیبانی</a>
+        <a href="#/help" data-nav="help">راهنما</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-button" id="apiSettingsButton" aria-label="تنظیمات اتصال" title="تنظیمات اتصال">
+          <svg viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.04 1.56V20.3h-3v-.08a1.7 1.7 0 0 0-1.04-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7 15a1.7 1.7 0 0 0-1.56-1.04H5.3v-3h.14A1.7 1.7 0 0 0 7 9.92a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.12-2.12.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 11.7 4.7V4.6h3v.1a1.7 1.7 0 0 0 1.04 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.12 2.12-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.56 1.04h.14v3h-.14A1.7 1.7 0 0 0 19.4 15Z"/></svg>
+        </button>
+        <button class="icon-button language-button" id="languageButton" type="button" aria-label="تغییر زبان سایت به انگلیسی" title="Switch to English" aria-pressed="false">
+          <span id="languageButtonLabel" aria-hidden="true">FA</span>
+          <span class="sr-only">تغییر زبان سایت</span>
+        </button>
+        <button class="icon-button" id="themeButton" type="button" aria-label="تغییر پوسته" title="تغییر پوسته">
+          <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+          <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+        </button>
+        <button class="button button-primary button-sm guest-only" id="openAuthButton"><span class="auth-label-full">ورود / ثبت‌نام</span><span class="auth-label-compact">ورود</span></button>
+        <button class="user-chip auth-only" id="userMenuButton" aria-haspopup="menu" aria-expanded="false" hidden>
+          <span class="avatar" id="headerAvatar">A</span>
+          <span class="user-chip-copy"><b id="headerUserName">کاربر</b><small id="headerUserRole">تماشاگر</small></span>
+          <svg viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg>
+        </button>
+        <button class="icon-button mobile-menu-button" id="mobileMenuButton" aria-label="باز کردن منو" aria-expanded="false">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="user-menu" id="userMenu" role="menu" hidden>
+      <a href="#/my" role="menuitem">حساب کاربری</a>
+      <a href="#/support" role="menuitem" class="support-only" hidden>پنل پشتیبانی</a>
+      <button data-action="logout" role="menuitem">خروج از حساب</button>
+    </div>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-label="منوی موبایل" hidden>
+      <a href="#/home">خانه</a>
+      <a href="#/tickets">مسابقات</a>
+      <a href="#/my" class="auth-only" hidden>حساب من</a>
+      <a href="#/support" class="support-only" hidden>پنل پشتیبانی</a>
+      <a href="#/help">راهنما</a>
+    </nav>
+  </header>
+
+  <main id="mainContent" tabindex="-1">
+    <section class="page page-home" data-page="home">
+      <div class="hero">
+        <div class="hero-glow hero-glow-one"></div>
+        <div class="hero-glow hero-glow-two"></div>
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <span class="eyebrow"><span class="live-dot"></span> مسیر مستقیم تو تا سکو</span>
+            <h1>هیجان را فقط تماشا نکن؛ <span>از نزدیک زندگی‌اش کن.</span></h1>
+            <p>مسابقه محبوبت را پیدا کن، جایگاه مناسب را انتخاب کن و بلیطت را در چند قدم امن رزرو کن.</p>
+            <form class="hero-search" id="heroSearchForm" role="search">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <input id="heroSearchInput" name="q" type="search" autocomplete="off" placeholder="تیم، ورزشگاه، لیگ یا شهر..." aria-label="جستجوی مسابقه">
+              <button class="button button-accent" type="submit">جستجو</button>
+            </form>
+            <div class="popular-searches"><span>پیشنهاد:</span><button data-quick-search="پرسپولیس">پرسپولیس</button><button data-quick-search="آزادی">ورزشگاه آزادی</button><button data-quick-search="والیبال">والیبال</button></div>
+            <div class="hero-trust">
+              <div><b id="heroTicketCount">+۴۰</b><span>جایگاه فعال</span></div>
+              <i></i>
+              <div><b>۱۰ دقیقه</b><span>رزرو امن</span></div>
+              <i></i>
+              <div><b>۲۴/۷</b><span>پشتیبانی</span></div>
+            </div>
+          </div>
+
+          <div class="hero-visual" aria-hidden="true">
+            <div class="stadium-card">
+              <div class="stadium-topline"><span>مسابقه ویژه هفته</span><span class="badge-live">فروش فعال</span></div>
+              <div class="teams-matchup">
+                <div class="team-emblem emblem-red">P</div>
+                <div class="versus"><b>VS</b><span>لیگ برتر</span></div>
+                <div class="team-emblem emblem-blue">E</div>
+              </div>
+              <div class="match-info-row"><span>پرسپولیس</span><span>استقلال</span></div>
+              <div class="stadium-field">
+                <div class="field-center"></div><div class="field-box field-box-a"></div><div class="field-box field-box-b"></div>
+                <span class="seat-pin pin-a"></span><span class="seat-pin pin-b"></span><span class="seat-pin pin-c"></span>
+              </div>
+              <div class="stadium-footer"><span><svg viewBox="0 0 24 24"><path d="M12 21s7-4.4 7-11a7 7 0 1 0-14 0c0 6.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2"/></svg> ورزشگاه آزادی</span><span>از ۱۵۰,۰۰۰ تومان</span></div>
+            </div>
+            <div class="floating-ticket floating-ticket-one"><span>VIP</span><b>ردیف ۱</b><small>صندلی ۲</small></div>
+            <div class="floating-ticket floating-ticket-two"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg><span><b>رزرو موفق</b><small>بلیط شما صادر شد</small></span></div>
+          </div>
+        </div>
+      </div>
+
+      <section class="section sport-section">
+        <div class="container">
+          <div class="section-heading"><div><span class="eyebrow dark">انتخاب سریع</span><h2>ورزش مورد علاقه‌ات</h2></div><a href="#/tickets" class="arrow-link">مشاهده همه مسابقات <span>←</span></a></div>
+          <div class="sport-grid" id="sportGrid">
+            <button class="sport-card" data-sport="football"><span class="sport-icon">⚽</span><b>فوتبال</b><small>پرمخاطب‌ترین مسابقات</small><i>←</i></button>
+            <button class="sport-card" data-sport="volleyball"><span class="sport-icon">🏐</span><b>والیبال</b><small>لیگ و جام‌های ملی</small><i>←</i></button>
+            <button class="sport-card" data-sport="basketball"><span class="sport-icon">🏀</span><b>بسکتبال</b><small>نزدیک به هیجان زمین</small><i>←</i></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section featured-section">
+        <div class="container">
+          <div class="section-heading"><div><span class="eyebrow dark">پیشنهاد MahTicket</span><h2>مسابقات نزدیک</h2></div><a href="#/tickets" class="arrow-link">همه بلیط‌ها <span>←</span></a></div>
+          <div class="ticket-grid" id="featuredTickets"><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div></div>
+        </div>
+      </section>
+
+      <section class="section steps-section">
+        <div class="container">
+          <div class="center-heading"><span class="eyebrow dark">ساده و سریع</span><h2>سه قدم تا حضور در ورزشگاه</h2><p>تمام مسیر خرید برای تجربه‌ای روان، شفاف و قابل پیگیری طراحی شده است.</p></div>
+          <div class="steps-grid">
+            <article><span class="step-number">۱</span><div class="step-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div><h3>مسابقه را پیدا کن</h3><p>با فیلتر ورزش، شهرستان، تاریخ، قیمت و جایگاه بهترین گزینه را پیدا کن.</p></article>
+            <article><span class="step-number">۲</span><div class="step-icon"><svg viewBox="0 0 24 24"><path d="M4 8h16v12H4zM8 8V5h8v3M8 13h8"/></svg></div><h3>جایگاه را رزرو کن</h3><p>بلیط برای مدت محدود به نام تو نگه داشته می‌شود تا با خیال راحت پرداخت کنی.</p></article>
+            <article><span class="step-number">۳</span><div class="step-icon"><svg viewBox="0 0 24 24"><path d="M5 12.5 9.5 17 19 7.5"/></svg></div><h3>بلیط را تحویل بگیر</h3><p>پس از پرداخت، شماره بلیط و کد ورود در حساب کاربری تو قابل مشاهده است.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section app-cta-section">
+        <div class="container app-cta">
+          <div><span class="eyebrow">همیشه همراه تو</span><h2>تمام بلیط‌ها و رزروها، یک‌جا و همیشه در دسترس</h2><p>وضعیت رزرو، پرداخت، درخواست کنسلی، تغییر جایگاه و گزارش‌ها را از پنل شخصی مدیریت کن.</p><a href="#/my" class="button button-accent">ورود به حساب کاربری</a></div>
+          <div class="dashboard-preview" aria-hidden="true"><div class="preview-sidebar"></div><div class="preview-main"><div class="preview-row"><i></i><i></i><i></i></div><div class="preview-chart"><span></span></div><div class="preview-list"><i></i><i></i><i></i></div></div></div>
+        </div>
+      </section>
+    </section>
+
+    <section class="page page-tickets" data-page="tickets" hidden>
+      <div class="page-hero compact-hero"><div class="container"><span class="eyebrow">جستجوی هوشمند</span><h1>بلیط مسابقات ورزشی</h1><p>میان جایگاه‌های فعال جستجو کن و انتخابت را با قیمت و ظرفیت واقعی انجام بده.</p></div></div>
+      <div class="container catalog-layout">
+        <aside class="filter-panel" id="filterPanel">
+          <div class="filter-header"><h2>فیلترها</h2><div class="filter-header-actions"><button class="link-button" type="button" id="clearFilters">پاک کردن همه</button><button class="filter-close" type="button" id="closeFilterButton" aria-label="بستن فیلترها">×</button></div></div>
+          <form id="ticketFilterForm">
+            <label class="field"><span>جستجو</span><div class="input-with-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" name="q" placeholder="تیم، لیگ، ورزشگاه..."></div></label>
+            <label class="field"><span>نوع ورزش</span><select name="sport" id="sportFilter"><option value="">همه ورزش‌ها</option></select></label>
+            <label class="field"><span>شهرستان</span><select name="city_id" id="cityFilter"><option value="">همه شهرستان‌ها</option></select></label>
+            <label class="field"><span>محل برگزاری</span><select name="venue_id" id="venueFilter"><option value="">همه ورزشگاه‌ها</option></select></label>
+            <label class="field"><span>رده بلیط</span><select name="category" id="categoryFilter"><option value="">همه رده‌ها</option></select></label>
+            <div class="field-group filter-date-fields"><label class="field"><span>از تاریخ</span><input type="date" name="date_from"></label><label class="field"><span>تا تاریخ</span><input type="date" name="date_to"></label></div>
+            <div class="field-group"><label class="field"><span>حداقل قیمت</span><input type="number" name="price_min" min="0" step="10000" placeholder="۰"></label><label class="field"><span>حداکثر قیمت</span><input type="number" name="price_max" min="0" step="10000" placeholder="هر قیمت"></label></div>
+            <label class="field"><span>حداقل ظرفیت موجود</span><input type="number" name="min_available" min="1" placeholder="۱"></label>
+            <label class="switch-row"><input type="checkbox" name="numbered"><span class="switch"></span><span>فقط صندلی شماره‌دار</span></label>
+            <button class="button button-primary button-block" type="submit">اعمال فیلترها</button>
+          </form>
+        </aside>
+        <button class="filter-backdrop" type="button" id="filterBackdrop" aria-label="بستن فیلترها" hidden></button>
+        <div class="catalog-main">
+          <div class="catalog-toolbar">
+            <div><button class="button button-soft filter-toggle" id="mobileFilterButton"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg> فیلتر</button><b id="resultsCount" hidden aria-hidden="true"></b></div>
+            <label class="sort-select"><span>مرتب‌سازی:</span><select id="ticketOrdering"><option value="starts_at">نزدیک‌ترین زمان</option><option value="-starts_at">دورترین زمان</option><option value="price">کمترین قیمت</option><option value="-price">بیشترین قیمت</option><option value="demand">پرفروش‌ترین</option><option value="availability">بیشترین ظرفیت</option></select></label>
+          </div>
+          <div class="active-filters" id="activeFilters"></div>
+          <div class="ticket-grid catalog-grid" id="ticketResults"></div>
+          <div class="empty-state" id="ticketsEmpty" hidden><div class="empty-icon">⌕</div><h3>بلیطی با این مشخصات پیدا نشد</h3><p>فیلترها را تغییر بده یا جستجو را با عبارت کوتاه‌تری انجام بده.</p><button class="button button-soft" data-action="clear-filters">حذف فیلترها</button></div>
+          <nav class="pagination" id="ticketPagination" aria-label="صفحه‌بندی نتایج"></nav>
+        </div>
+      </div>
+    </section>
+
+    <section class="page page-dashboard" data-page="my" hidden>
+      <div class="container dashboard-shell">
+        <aside class="dashboard-sidebar">
+          <div class="profile-summary"><span class="avatar avatar-lg" id="dashboardAvatar">A</span><div><b id="dashboardName">کاربر MahTicket</b><span id="dashboardContact">—</span></div></div>
+          <nav id="accountTabs" class="dashboard-nav">
+            <button data-account-tab="overview" class="active"><span>⌂</span>نمای کلی</button>
+            <button data-account-tab="reservations" class="spectator-only" hidden><span>◷</span>رزروها</button>
+            <button data-account-tab="bookings" class="spectator-only" hidden><span>▣</span>بلیط‌های من</button>
+            <button data-account-tab="payments" class="spectator-only" hidden><span>◈</span>پرداخت‌ها</button>
+            <button data-account-tab="wallet" class="spectator-only" hidden><span>◫</span>کیف پول</button>
+            <button data-account-tab="reports" class="spectator-only" hidden><span>◉</span>گزارش‌ها</button>
+            <button data-account-tab="profile"><span>◎</span>پروفایل و امنیت</button>
+          </nav>
+          <button class="dashboard-logout" data-action="logout">خروج از حساب</button>
+        </aside>
+        <div class="dashboard-content" id="accountContent"><div class="dashboard-loading"><span class="spinner"></span> در حال آماده‌سازی حساب کاربری...</div></div>
+      </div>
+    </section>
+
+    <section class="page page-support" data-page="support" hidden>
+      <div class="container support-shell">
+        <div class="support-heading"><div><span class="eyebrow dark">مرکز عملیات MahTicket</span><h1>پنل پشتیبانی</h1><p>وضعیت رزروها، پرداخت‌های مشکوک، درخواست‌ها و موجودی بلیط را یک‌جا مدیریت کن.</p></div><button class="button button-primary" data-action="support-create-ticket">+ ایجاد ردیف بلیط</button></div>
+        <div class="metric-grid" id="supportMetrics"></div>
+        <div class="support-workspace">
+          <nav class="support-tabs" id="supportTabs">
+            <button data-support-tab="chats">گفتگوها <span class="support-tab-badge" id="supportChatTabBadge" hidden>۰</span></button>
+            <button class="active" data-support-tab="reservations">رزروها</button>
+            <button data-support-tab="cancellations">کنسلی‌ها</button>
+            <button data-support-tab="seatChanges">تغییر جایگاه</button>
+            <button data-support-tab="reports">گزارش‌ها</button>
+            <button data-support-tab="payments">پرداخت‌های مشکوک</button>
+            <button data-support-tab="tickets">مدیریت بلیط‌ها</button>
+          </nav>
+          <div id="supportContent" class="support-content"><div class="dashboard-loading"><span class="spinner"></span> در حال دریافت اطلاعات...</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page page-help" data-page="help" hidden>
+      <div class="page-hero compact-hero"><div class="container"><span class="eyebrow">راهنمای کامل</span><h1>چطور از MahTicket استفاده کنم؟</h1><p>پاسخ کوتاه و روشن برای مهم‌ترین مراحل جستجو، رزرو، پرداخت و پشتیبانی.</p></div></div>
+      <div class="container help-layout">
+        <aside class="help-index"><a href="#/help/help-search" data-help-target="help-search">جستجو و انتخاب</a><a href="#/help/help-reserve" data-help-target="help-reserve">رزرو موقت</a><a href="#/help/help-payment" data-help-target="help-payment">پرداخت</a><a href="#/help/help-cancel" data-help-target="help-cancel">کنسلی و استرداد</a><a href="#/help/help-security" data-help-target="help-security">امنیت حساب</a></aside>
+        <div class="faq-list">
+          <article id="help-search"><h2>چطور بلیط مناسب را پیدا کنم؟</h2><p>در صفحه مسابقات می‌توانی بر اساس ورزش، شهرستان، ورزشگاه، تاریخ، رده بلیط، بازه قیمت، ظرفیت و شماره‌دار بودن صندلی فیلتر کنی. مرتب‌سازی بر اساس زمان، قیمت، تقاضا و موجودی نیز در دسترس است.</p></article>
+          <article id="help-reserve"><h2>رزرو موقت چقدر اعتبار دارد؟</h2><p>بعد از ثبت رزرو، زمان انقضا از سرور دریافت می‌شود و شمارش معکوس در پنل نمایش داده می‌شود. در داده‌های نمونه پروژه، رزرو معمولاً ۱۰ دقیقه نگه داشته می‌شود و سپس خودکار آزاد خواهد شد.</p></article>
+          <article id="help-payment"><h2>پرداخت چگونه انجام می‌شود؟</h2><p>روش پرداخت را از میان گزینه‌های فعال سیستم انتخاب می‌کنی. در این پروژه پرداخت به‌صورت محلی شبیه‌سازی شده و پاسخ موفق یا ناموفق مستقیماً از API دریافت می‌شود.</p></article>
+          <article id="help-cancel"><h2>پیش از کنسلی چه چیزی می‌بینم؟</h2><p>ابتدا درصد جریمه و مبلغ تقریبی استرداد از API محاسبه می‌شود. سپس می‌توانی دلیل کنسلی را ثبت کنی تا پشتیبان درخواست را بررسی کند و در صورت تأیید، مبلغ به کیف پول برگردد.</p></article>
+          <article id="help-security"><h2>اطلاعات ورود کجا نگهداری می‌شود؟</h2><p>توکن‌های نشست در فضای ذخیره‌سازی مرورگر نگهداری می‌شوند و تمام درخواست‌های خصوصی با JWT ارسال می‌شوند. در زمان خروج، توکن‌ها از سمت سرور باطل و از مرورگر پاک می‌شوند.</p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div><a class="brand footer-brand" href="#/home"><span class="brand-mark"><svg viewBox="0 0 48 48"><path d="M8 11.5A5.5 5.5 0 0 1 13.5 6h21A5.5 5.5 0 0 1 40 11.5V17a5 5 0 0 0 0 10v9.5a5.5 5.5 0 0 1-5.5 5.5h-21A5.5 5.5 0 0 1 8 36.5V27a5 5 0 0 0 0-10v-5.5Z"/><path class="brand-cut" d="M24 11v26M18 17h12M18 24h12M18 31h12"/></svg></span><span class="brand-copy"><b>MahTicket</b><small>پلتفرم جامع بلیط ورزشی</small></span></a><p>جستجو، رزرو، خرید و مدیریت بلیط مسابقات ورزشی در یک تجربه امن و یکپارچه.</p></div>
+      <div><h3>دسترسی سریع</h3><a href="#/tickets">مسابقات</a><a href="#/my">حساب کاربری</a><a href="#/help">راهنما</a></div>
+      <div><h3>خدمات</h3><span>رزرو موقت بلیط</span><span>کنسلی و استرداد</span><span>تغییر جایگاه</span><span>پشتیبانی گزارش‌ها</span></div>
+      <div><h3>وضعیت سرویس</h3><div class="service-status" id="footerServiceStatus"><span class="status-dot"></span><b>در حال بررسی...</b></div><small>API نسخه 3.1.0</small></div>
+    </div>
+    <div class="container footer-bottom"><span>© ۲۰۲۶ MahTicket — پروژه نهایی پایگاه داده</span><span>طراحی واکنش‌گرا · HTML / CSS / JavaScript</span></div>
+  </footer>
+
+  <div class="support-chat-dock" id="supportChatDock" aria-live="polite">
+    <section class="support-chat-panel" id="supportChatPanel" aria-label="گفتگو با پشتیبانی" hidden>
+      <header class="support-chat-header">
+        <div class="support-chat-agent">
+          <span class="support-agent-avatar" aria-hidden="true">AP</span>
+          <span><b>پشتیبانی MahTicket</b><small><i class="support-online-dot"></i> پاسخ‌گویی آنلاین</small></span>
+        </div>
+        <button class="support-chat-close" type="button" data-action="close-support-chat" aria-label="بستن گفتگو">×</button>
+      </header>
+      <div class="support-chat-welcome">
+        <b>سلام! چطور می‌تونیم کمکت کنیم؟</b>
+        <span>پیامت مستقیم برای پشتیبان‌های MahTicket ارسال می‌شود.</span>
+      </div>
+      <div class="support-chat-messages" id="supportChatMessages" role="log" aria-live="polite" aria-relevant="additions">
+        <div class="chat-loading"><span class="spinner"></span> در حال دریافت گفتگو...</div>
+      </div>
+      <form class="support-chat-composer" id="supportChatForm">
+        <label class="sr-only" for="supportChatInput">متن پیام</label>
+        <textarea id="supportChatInput" name="body" rows="1" maxlength="2000" placeholder="پیامت را بنویس..." required></textarea>
+        <button type="submit" aria-label="ارسال پیام" title="ارسال">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11.2 20 4l-7.2 16.5-2.1-7.2-7.2-2.1Z"/><path d="m10.7 13.3 4.4-4.4"/></svg>
+        </button>
+      </form>
+      <div class="support-chat-login" id="supportChatLogin" hidden>
+        <b>برای شروع گفتگو وارد حساب شو</b>
+        <p>گفتگوها به حساب کاربری متصل می‌شوند تا پاسخ پشتیبان را از دست ندهی.</p>
+        <button class="button button-primary button-block" type="button" data-action="chat-login">ورود / ثبت‌نام</button>
+      </div>
+    </section>
+    <button class="support-chat-launcher" id="supportChatLauncher" type="button" aria-label="ارتباط با پشتیبانی" aria-controls="supportChatPanel" aria-expanded="false">
+      <svg class="chat-open-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.8A2.8 2.8 0 0 1 6.8 3h10.4A2.8 2.8 0 0 1 20 5.8v7.4a2.8 2.8 0 0 1-2.8 2.8H10l-4.8 4v-4.2A2.8 2.8 0 0 1 4 13.2V5.8Z"/><path d="M8 8h8M8 11.5h5"/></svg>
+      <svg class="chat-close-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+      <span class="support-chat-unread" id="supportChatUnread" hidden>۰</span>
+      <span class="support-chat-label">پشتیبانی</span>
+    </button>
+  </div>
+
+  <dialog id="authDialog" class="modal auth-modal">
+    <button class="modal-close" data-close-dialog aria-label="بستن">×</button>
+    <div class="auth-layout">
+      <div class="auth-aside"><div class="auth-aside-content"><span class="eyebrow">به MahTicket خوش آمدی</span><h2>یک حساب، تمام هیجان ورزش</h2><p>ثبت‌نام و ورود با رمز یا کد یکبار مصرف، همراه با نشست امن و قابل لغو.</p><ul><li>تأیید ایمیل هنگام ثبت‌نام</li><li>کد یکبار مصرف با انقضای محدود</li><li>چرخش امن توکن ورود</li></ul></div></div>
+      <div class="auth-main">
+        <div class="auth-tabs" role="tablist" aria-label="روش ورود"><button class="active" type="button" role="tab" aria-selected="true" data-auth-tab="password">ورود با رمز</button><button type="button" role="tab" aria-selected="false" data-auth-tab="otp">ورود با کد یکبار مصرف</button><button type="button" role="tab" aria-selected="false" data-auth-tab="signup">ثبت‌نام</button></div>
+
+        <section data-auth-panel="password">
+          <h2>ورود به حساب</h2><p class="muted">ایمیل یا شماره تلفن و رمز عبور را وارد کن.</p>
+          <form id="passwordLoginForm" class="stack-form" novalidate>
+            <label class="field"><span>ایمیل یا شماره تلفن</span><input name="contact" required autocomplete="username" inputmode="email" dir="ltr" placeholder="hossein.m@gmail.com"></label>
+            <label class="field"><span>رمز عبور</span><div class="password-field"><input name="password" type="password" required minlength="8" maxlength="128" autocomplete="current-password" dir="ltr" placeholder="••••••••"><button type="button" data-toggle-password aria-label="نمایش رمز">◉</button></div></label>
+            <label class="checkbox-row"><input type="checkbox" name="remember"><span>ورود من در این مرورگر حفظ شود</span></label>
+            <button class="button button-primary button-block" type="submit">ورود امن</button>
+            <button class="demo-login" type="button" data-demo-login="spectator">ورود سریع با کاربر نمونه تماشاگر</button>
+            <button class="demo-login" type="button" data-demo-login="support">ورود سریع با پشتیبان نمونه</button>
+          </form>
+        </section>
+
+        <section data-auth-panel="otp" hidden>
+          <h2>ورود با کد یکبار مصرف</h2><p class="muted">برای حساب موجود، کد شش‌رقمی به ایمیل یا شماره ثبت‌شده ارسال می‌شود.</p>
+          <div id="otpFlowMessage" class="auth-flow-message" role="status" aria-live="polite" hidden></div>
+          <form id="otpRequestForm" class="stack-form" novalidate>
+            <label class="field"><span>ایمیل یا شماره تلفن</span><input name="contact" required autocomplete="username" inputmode="email" dir="ltr" placeholder="name@example.com"></label>
+            <button class="button button-primary button-block" type="submit">ارسال کد ورود</button>
+          </form>
+          <form id="otpVerifyForm" class="stack-form auth-code-form" hidden novalidate>
+            <input type="hidden" name="contact">
+            <div class="auth-code-destination"><span>کد به این مقصد ارسال شد:</span><b id="otpMaskedContact" dir="ltr"></b></div>
+            <label class="field"><span>کد تأیید شش‌رقمی</span><input name="code" class="otp-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required dir="ltr" placeholder="000000"></label>
+            <div class="otp-meta"><span id="otpCountdown" aria-live="polite"></span><button type="button" class="link-button" data-action="otp-back">تغییر راه ارتباطی</button></div>
+            <p class="debug-code" id="otpDebugCode" hidden></p>
+            <a id="otpMailboxButton" href="/mailpit/" class="button button-soft button-block mailpit-inbox-link mailpit-only" target="_blank" rel="noopener" hidden>باز کردن ایمیل کد ورود</a>
+            <label class="checkbox-row"><input type="checkbox" name="remember"><span>ورود من در این مرورگر حفظ شود</span></label>
+            <button class="button button-primary button-block" type="submit">تأیید و ورود</button>
+            <button class="button button-soft button-block" id="otpResendButton" type="button" data-action="otp-resend" disabled>ارسال مجدد کد</button>
+          </form>
+          <p class="auth-dev-hint mailpit-only" hidden>در حالت آزمایشی Mailpit، ایمیل‌ها در <a href="/mailpit/" class="mailpit-inbox-link" target="_blank" rel="noopener">صندوق محلی</a> دیده می‌شوند.</p>
+        </section>
+
+        <section data-auth-panel="signup" hidden>
+          <div class="auth-progress" id="signupProgress" aria-label="مراحل ثبت‌نام">
+            <span class="active" data-signup-progress="details">۱. اطلاعات</span>
+            <span data-signup-progress="verify">۲. تأیید ایمیل</span>
+            <span data-signup-progress="done">۳. ورود</span>
+          </div>
+          <div id="signupFlowMessage" class="auth-flow-message" role="status" aria-live="polite" hidden></div>
+          <div id="signupEntryStep">
+            <h2>ساخت حساب جدید</h2><p class="muted">بعد از ثبت اطلاعات، یک کد شش‌رقمی به ایمیل واقعی شما فرستاده می‌شود.</p>
+            <form id="signupForm" class="stack-form" novalidate>
+              <div class="field-group"><label class="field"><span>نام</span><input name="first_name" required maxlength="100" autocomplete="given-name"></label><label class="field"><span>نام خانوادگی</span><input name="last_name" required maxlength="100" autocomplete="family-name"></label></div>
+              <label class="field"><span>ایمیل</span><input name="email" type="email" autocomplete="email" inputmode="email" dir="ltr" placeholder="name@example.com"></label>
+              <label class="field"><span>شماره تلفن</span><input name="phone" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="09121234567"></label>
+              <label class="field"><span>شهرستان محل سکونت</span><select name="city_id" id="signupCity"><option value="">انتخاب شهرستان (اختیاری)</option></select></label>
+              <div class="field-group"><label class="field"><span>راه تأیید و ورود ترجیحی</span><select name="preferred_login" id="signupPreferredLogin"><option value="email">ایمیل</option><option value="phone" id="signupPhoneOtpOption">شماره تلفن</option></select></label><label class="field"><span>تاریخ تولد</span><input name="date_of_birth" type="date"></label></div>
+              <label class="field"><span>رمز عبور</span><div class="password-field"><input name="password" type="password" minlength="8" maxlength="128" required autocomplete="new-password" dir="ltr" placeholder="Aa123456"><button type="button" data-toggle-password aria-label="نمایش رمز">◉</button></div><small>حداقل ۸ کاراکتر، شامل حرف بزرگ، حرف کوچک و عدد</small></label>
+              <label class="field"><span>تکرار رمز عبور</span><div class="password-field"><input name="confirm_password" type="password" minlength="8" maxlength="128" required autocomplete="new-password" dir="ltr" placeholder="Aa123456"><button type="button" data-toggle-password aria-label="نمایش رمز">◉</button></div></label>
+              <label class="checkbox-row"><input type="checkbox" name="accept_terms" required><span>قوانین استفاده و حریم خصوصی را می‌پذیرم.</span></label>
+              <button class="button button-primary button-block" type="submit">ارسال کد تأیید و ادامه</button>
+            </form>
+          </div>
+          <form id="signupVerifyForm" class="stack-form auth-code-form" hidden novalidate>
+            <input type="hidden" name="registration_id">
+            <h2>تأیید ثبت‌نام</h2>
+            <div class="auth-code-destination"><span>کد ثبت‌نام به این مقصد ارسال شد:</span><b id="signupMaskedContact" dir="ltr"></b></div>
+            <label class="field"><span>کد تأیید شش‌رقمی</span><input name="code" class="otp-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required dir="ltr" placeholder="000000"></label>
+            <p id="signupCountdown" class="muted" aria-live="polite"></p>
+            <p class="debug-code" id="signupDebugCode" hidden></p>
+            <a id="signupMailboxButton" href="/mailpit/" class="button button-soft button-block mailpit-inbox-link mailpit-only" target="_blank" rel="noopener" hidden>باز کردن صندوق ایمیل</a>
+            <button class="button button-primary button-block" type="submit">تأیید و ساخت حساب</button>
+            <button class="button button-soft button-block" id="signupResendButton" type="button" data-action="signup-resend" disabled>ارسال مجدد کد ثبت‌نام</button>
+            <button class="link-button auth-back-link" type="button" data-action="signup-back">ویرایش اطلاعات ثبت‌نام</button>
+          </form>
+          <p class="auth-dev-hint mailpit-only" hidden>در حالت آزمایشی Mailpit، بعد از ارسال کد <a href="/mailpit/" class="mailpit-inbox-link" target="_blank" rel="noopener">صندوق محلی</a> را باز کن.</p>
+        </section>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="ticketDialog" class="modal ticket-modal"><button class="modal-close" data-close-dialog aria-label="بستن">×</button><div id="ticketDialogContent" class="modal-content"></div></dialog>
+  <dialog id="formDialog" class="modal form-modal"><button class="modal-close" data-close-dialog aria-label="بستن">×</button><div id="formDialogContent" class="modal-content"></div></dialog>
+  <dialog id="apiDialog" class="modal small-modal"><button class="modal-close" data-close-dialog aria-label="بستن">×</button><div class="modal-content"><span class="eyebrow dark">تنظیمات توسعه</span><h2>آدرس سرویس API</h2><p class="muted">در اجرای Docker، فرانت‌اند به‌صورت خودکار از مسیر هم‌دامنه <code dir="ltr">/api/v1</code> استفاده می‌کند. در اجرای دستی نیز پورت ۸۰۰۰ شناسایی می‌شود.</p><form id="apiConfigForm" class="stack-form"><label class="field"><span>Base URL</span><input name="api_base" dir="ltr" required placeholder="/api/v1 یا http://127.0.0.1:8000/api/v1"></label><button class="button button-primary button-block" type="submit">ذخیره و بررسی اتصال</button><button class="button button-soft button-block" type="button" data-action="reset-api">بازگشت به مقدار پیش‌فرض</button></form></div></dialog>
+
+  <div class="dialog-backdrop" id="dialogBackdrop" hidden></div>
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+  <div class="global-loader" id="globalLoader" hidden><span class="spinner"></span><p>در حال پردازش درخواست...</p></div>
+
+  <template id="emptyRowTemplate"><div class="table-empty"><span>—</span><b>اطلاعاتی برای نمایش وجود ندارد</b></div></template>
+  <script src="i18n.js?v=1.7.0" defer></script>
+  <script src="app.js?v=1.7.0" defer></script>
+</body>
+</html>

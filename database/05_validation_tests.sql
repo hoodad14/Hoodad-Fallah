@@ -713,8 +713,8 @@ DECLARE
     v_reservation_id BIGINT;
     v_rejected BOOLEAN:=FALSE;
 BEGIN
+-- Inactive catalog entities block both new holds and payment completion
     SELECT ticket_category_id INTO v_category_id FROM tickets WHERE id=1;
-
     UPDATE ticket_categories SET is_active=FALSE WHERE id=v_category_id;
     BEGIN
         PERFORM * FROM reserve_ticket(25,1,1);
