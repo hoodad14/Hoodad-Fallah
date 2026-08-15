@@ -109,10 +109,3 @@ docker-data/
 postgres-data/
 redis-data/
 elasticsearch-data/
-
-# -----------------------------
-# Assignment PDFs
-# They are reference/assignment files, not project source.
-# Remove this line only if the instructor explicitly requires them in Git.
-# -----------------------------
-docs/*.pdf
