@@ -14,8 +14,10 @@ WORKDIR /app
 RUN addgroup --system app && adduser --system --ingroup app app
 
 COPY requirements.txt /app/requirements.txt
+COPY requirements-dev.txt /app/requirements-dev.txt
+
 RUN python -m pip install --upgrade pip \
-    && python -m pip install --requirement /app/requirements.txt
+    && python -m pip install --requirement /app/requirements-dev.txt
 
 COPY --chown=app:app . /app
 RUN chmod +x /app/manage.py /app/worker.py /app/entrypoint.sh \

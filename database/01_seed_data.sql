@@ -1,5 +1,7 @@
 
 BEGIN;
+-- 10+ rows per table
+
 
 CREATE TEMP TABLE seed_clock ON COMMIT DROP AS
 SELECT
